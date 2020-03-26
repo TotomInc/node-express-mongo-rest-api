@@ -1,0 +1,6 @@
+{
+  "ignore": ["node_modules", "dist"],
+  "watch": ["*"],
+  "ext": "js,ts,json",
+  "exec": "ts-node -r tsconfig-paths/register -P tsconfig.json --files index.ts"
+}

@@ -1,0 +1,13 @@
+# Node related files/folders
+node_modules
+dist
+
+# MacOS related files/folders
+.DS_Store
+
+# Environment variables related files
+.env
+.env.local
+
+# Testing related
+coverage
