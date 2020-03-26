@@ -13,8 +13,10 @@
     "build": "rm -rf ./dist && tsc -p tsconfig.production.json",
     "dev": "nodemon",
     "lint": "eslint -c .eslintrc.js --ext \".js,.ts\" .",
+    "lint:fix": "eslint --fix -c .eslintrc.js --ext \".js,.ts\" .",
     "release": "yarn build && node ./build/sentry-release --environment production",
     "release:staging": "yarn build && node ./build/sentry-release --environment staging",
+    "serve-coverage": "http-server ./coverage",
     "start": "cross-env NODE_ENV=production node ./dist/index.js",
     "test": "jest --verbose --silent",
     "test:watch": "jest --watch"
