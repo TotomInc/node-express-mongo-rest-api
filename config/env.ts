@@ -15,6 +15,11 @@ const envSchema = joi
       .port()
       .default(4000),
 
+    MONGO_URI: joi
+      .string()
+      .uri()
+      .required(),
+
     SENTRY_DSN: joi
       .string()
       .uri()
@@ -33,12 +38,13 @@ if (error && process.env.NODE_ENV !== 'test') {
   throw new Error(`Config validation errors, please check the .env file: ${error.message}`);
 }
 
-/**
- * Environment variables ready to be used with types.
- */
 export default {
   nodeEnv: value.NODE_ENV as string,
   port: value.API_PORT as number,
+
+  mongo: {
+    uri: value.MONGO_URI as string,
+  },
 
   sentry: {
     DSN: value.SENTRY_DSN as string | undefined,
