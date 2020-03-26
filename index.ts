@@ -1,11 +1,5 @@
 import './config/modules-aliases';
 
-/**
- * Async bootstrap/entry-point:
- *  - load environment variables
- *  - initialize Sentry (if provided a DSN)
- *  - start the express app
- */
 (async (): Promise<void> => {
   // eslint-disable-next-line no-underscore-dangle
   global.__sentryRootDir = __dirname || process.cwd();
@@ -17,6 +11,10 @@ import './config/modules-aliases';
   const sentry = await import('./config/sentry').then((pkg) => pkg.default);
 
   sentry.init();
+
+  const mongo = await import('./config/mongo').then((pkg) => pkg.default);
+
+  await mongo.init();
 
   const app = await import('./config/express').then((pkg) => pkg.default);
 
