@@ -6,16 +6,18 @@
 
 To get the server running locally:
 
-- Clone the repo
-- `yarn` to install all the dependencies
+- Install and setup a local MongoDB server.
+- Clone the repo.
+- `yarn` to install all the dependencies.
 - Copy `.env.example` file as `.env` and edit the environment variables.
-- `yarn run dev` to run the server locally
+- `yarn run dev` to run the server locally.
 
 ## Overview
 
 ### Dependencies
 
 - typescript: JavaScript superset to scale large applications
+- mongoose: MongoDB object modeling for Node.js
 - express: HTTP server for handling routing
 - express-jwt: JSON Web Token authentication middleware
 - celebrate: express middleware for handling validation
