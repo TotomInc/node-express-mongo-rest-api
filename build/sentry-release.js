@@ -20,14 +20,9 @@ const sourceMapsPath = path.join(__dirname, '../dist');
 
 const environmentArg = findArgumentValue('--environment', '-e', true);
 
-const prefix = `${chalk.gray('[')}${chalk.cyan('sentry-release')}${chalk.gray(
-  ']',
-)}`;
+const prefix = `${chalk.gray('[')}${chalk.cyan('sentry-release')}${chalk.gray(']')}`;
 
-console.log(
-  prefix,
-  `Uploading sourcemaps for @${sentryOrg}/${sentryProject}, release ${sentryRelease}`,
-);
+console.log(prefix, `Uploading sourcemaps for @${sentryOrg}/${sentryProject}, release ${sentryRelease}`);
 
 execSync(
   `sentry-cli --auth-token ${sentryToken} releases --org ${sentryOrg} --project ${sentryProject} files ${sentryRelease} upload-sourcemaps ${sourceMapsPath} --no-rewrite`,
@@ -48,7 +43,4 @@ execSync(
   },
 );
 
-console.log(
-  prefix,
-  `@${sentryOrg}/${sentryProject} release ${sentryRelease} have been deployed on Sentry`,
-);
+console.log(prefix, `@${sentryOrg}/${sentryProject} release ${sentryRelease} have been deployed on Sentry`);

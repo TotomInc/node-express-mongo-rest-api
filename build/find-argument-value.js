@@ -9,9 +9,7 @@
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 module.exports = function findArgumentValue(argName, argPrefix, valueRequired) {
   const args = process.argv.slice(2);
-  const argIndex = args.findIndex(
-    (arg) => arg === argName || arg === argPrefix,
-  );
+  const argIndex = args.findIndex((arg) => arg === argName || arg === argPrefix);
 
   if (argIndex === -1) {
     throw new Error(`Unable to find argument ${argName}:${argPrefix}.`);
