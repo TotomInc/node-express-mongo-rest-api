@@ -38,6 +38,19 @@ To get the server running locally:
 - `server/` contains a folder for every route, this is the main Express logic for all of your routes.
 - `types/` override specific modules `*.d.ts.` typings.
 
+### Commands
+
+- `yarn build`: build TypeScript source-files into the `/dist` directory.
+- `yarn dev`: run Nodemon, hot-reload the development server.
+- `yarn lint`: run ESLint, print warnings and errors (doesn't auto-fix).
+- `yarn lint:fix`: run ESLint and fix all auto-fixable ESLint rules.
+- `yarn release`: build source-files and create a production Sentry release.
+- `yarn release:staging`: build source-files and create a staging Sentry release.
+- `yarn serve-coverage`: start an HTTP server for the coverage directory.
+- `yarn start`: execute the compiled app (from `/dist`) in production environment.
+- `yarn test`: run Jest tests (`--silent --verbose` as it's meant to be used by CI).
+- `yarn test:watch`: run Jest in `--watch` mode.
+
 ### Error-handling
 
 There are multiple error handlers already provided in the `config/express.ts` file.
@@ -47,6 +60,33 @@ There are multiple error handlers already provided in the `config/express.ts` fi
 - A third error-handler for all the other errors.
 
 If in development, the returned error (as a JSON response) will show the stacktrace to help you debug.
+
+### Testing and CI
+
+Jest is integrated with a sample test (`server/auth/auth.spec.ts`) to give you an idea.
+
+When running `yarn test`, a `/coverage` folder will be generated so you can take a look at the code-coverage by running `yarn serve-coverage`.
+
+CI is powered by GitHub Actions. The configuration file of the GitHub Action is located under `.github/workflow/build.yml`.
+
+### Linting + formatting
+
+Linting is done with ESLint and formatting with Prettier.
+
+There are already a set of ESLint rules which includes TypeScript best-practices, the `.eslintrc.js` extends the [`@totominc/eslint-config-typescript`](https://www.npmjs.com/package/@totominc/eslint-config-typescript) configuration.
+
+### Sentry
+
+[Sentry](https://sentry.io/) is integrated in the project.
+
+Make sure to define Sentry-related environment variables in your `.env` (project DSN, application token, organization, project, release).
+
+#### Releasing a new version
+
+- Update the `SENTRY_RELEASE` environment variable
+- Run `yarn release` or `yarn release:staging` depending on the environment you want
+
+Source-maps will be uploaded to Sentry in order to give more context to the errors, which will make debugging easier.
 
 ## License
 
