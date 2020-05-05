@@ -53,6 +53,77 @@ To get the server running locally:
 - `yarn test`: run Jest tests (`--silent --verbose` as it's meant to be used by CI).
 - `yarn test:watch`: run Jest in `--watch` mode.
 
+### Deployments
+
+Deployments have been tested on Ubuntu 18.04 LTS and we recommend Ubuntu.
+
+We are using `systemd` instead of [`pm2`](https://pm2.keymetrics.io/) or [`forever`](https://www.npmjs.com/package/forever) to gain more control on the node process.
+
+> Please, do not use `pm2` as there are some issues when accessing _root_ files such as SSL keys. You need to mess with PM2 settings and create a new PM2 user with appropriate permissions. The `systemd` method is easier, more stable, native and lets you have more control on the node process.
+
+#### Setup environment
+
+1. Create a `node` user to run the process and switch to that user:
+
+   - `sudo adduser node`
+   - `su - node`
+
+2. Install [`nvm`](https://github.com/nvm-sh/nvm#installing-and-updating) with latest v12 LTS:
+
+   - `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash`
+
+3. Install [`yarn`](https://classic.yarnpkg.com/en/docs/install/#debian-stable):
+
+   - `curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -`
+   - `echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list`
+   - `sudo apt update && sudo apt install yarn`
+
+4. Clone the repository, run `yarn` and `yarn build`.
+
+5. Make sure to fill environment variables:
+   - `cp .env.example .env`
+
+#### Setup process
+
+> **Note**: if you don't edit the `scripts/update.sh` manually, it will use the name property from the `package.json` as the service name (without hyphens) when running `systemctl` commands (referred to `<myservice>` in this section).
+
+1. Create a process configuration file `/etc/systemd/system/<myservice>.service` containing the following:
+
+   ```bash
+   [Unit]
+   Description=<my-service-description>
+
+   [Service]
+   EnvironmentFile=-/etc/default/<myservice>
+   ExecStart=/home/node/.nvm/versions/node/<current-lts>/bin/node /home/node/<project-name>/dist/index.js
+   WorkingDirectory=/home/node/<project-name>
+   LimitNOFILE=4096
+   IgnoreSIGPIPE=false
+   KillMode=process
+   User=node
+   SyslogIdentifier=<my-service-identifier>
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+2. Create an environment file `/etc/default/<myservice>` containing the following:
+
+   ```bash
+   # Feel free to add other required environment variables.
+   NODE_ENV=production
+   ```
+
+3. Make the all the scripts executable with `chmod +x ./scripts/*.sh`.
+4. Enable the process on startup `systemctl enable <myservice>`.
+5. Start the process `systemctl start <myservice>`.
+6. Verify everything is working well `systemctl status <myservice> --l --no-pager`.
+   - You can also use `lsof -i -p <api-port>` to verify the Node process is actually listening on the specified port(s).
+
+#### Restarting the API
+
+- Run `scripts/update.sh` to automatically pull changes, install dependencies, build from source and restart `systemctl` process.
+
 ### Error-handling
 
 There are multiple error handlers already provided in the `config/express.ts` file.
