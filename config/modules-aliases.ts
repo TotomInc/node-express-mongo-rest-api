@@ -9,6 +9,7 @@ import ModuleAlias from 'module-alias';
   const aliases = {
     '@config': path.join(__dirname, '../config'),
     '@interfaces': path.join(__dirname, '../interfaces'),
+    '@server': path.join(__dirname, '../server'),
   };
 
   ModuleAlias.addAliases(aliases);
