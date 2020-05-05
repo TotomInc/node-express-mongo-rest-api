@@ -15,22 +15,32 @@ const envSchema = joi
       .required()
       .allow('true', 'false'),
 
-    CORS_WHITELIST: joi.string().required(),
+    CORS_WHITELIST: joi.string().optional(),
 
     API_PORT: joi
       .number()
       .port()
       .default(4000),
 
+    API_HTTPS_PORT: joi
+      .number()
+      .port()
+      .default(8443),
+
     MONGO_URI: joi
       .string()
       .uri()
       .required(),
 
+    PRIVATE_KEY_PATH: joi.string().required(),
+    CERTIFICATE_PATH: joi.string().required(),
+    CHAIN_PATH: joi.string().required(),
+
     SENTRY_DSN: joi
       .string()
       .uri()
       .optional(),
+
     SENTRY_RELEASE: joi.string().optional(),
     SENTRY_TOKEN: joi.string().optional(),
     SENTRY_ORG: joi.string().optional(),
@@ -48,8 +58,15 @@ if (error && process.env.NODE_ENV !== 'test') {
 export default {
   nodeEnv: value.NODE_ENV as string,
   port: value.API_PORT as number,
+  httpsPort: value.API_HTTPS_PORT as number,
   enableCors: Boolean(value.ENABLE_CORS) as boolean,
   corsWhitelist: (value.CORS_WHITELIST as string).split(','),
+
+  https: {
+    privateKey: value.PRIVATE_KEY_PATH as string,
+    certificate: value.CERTIFICATE_PATH as string,
+    chain: value.CHAIN_PATH as string,
+  },
 
   mongo: {
     uri: value.MONGO_URI as string,
