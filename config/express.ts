@@ -6,6 +6,7 @@
 import { Server } from 'http';
 import express, { NextFunction, Request, Response, Express } from 'express';
 import expressJwt from 'express-jwt';
+import rateLimit from 'express-rate-limit';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -23,6 +24,14 @@ const app = express();
  */
 const unprotectedPaths: string[] = ['/api/heartbeat', '/api/auth/'];
 
+/**
+ * Options for `express-rate-limit`.
+ */
+const limiter = rateLimit({
+  windowMs: 1000 * 60,
+  max: 30,
+});
+
 // Parse body params and attach them to `req.body`
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -35,6 +44,9 @@ app.use(cors());
 
 // Enable JWT protection but add exceptions on some paths
 app.use(expressJwt({ secret: env.secrets.jwt }).unless({ path: unprotectedPaths }));
+
+// Enable Express rate-limit middleware
+app.use(limiter);
 
 // Add HTTP request logging to console
 app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
