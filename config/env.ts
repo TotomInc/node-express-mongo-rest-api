@@ -10,6 +10,13 @@ const envSchema = joi
 
     JWT_SECRET: joi.string().required(),
 
+    ENABLE_CORS: joi
+      .string()
+      .required()
+      .allow('true', 'false'),
+
+    CORS_WHITELIST: joi.string().required(),
+
     API_PORT: joi
       .number()
       .port()
@@ -41,6 +48,8 @@ if (error && process.env.NODE_ENV !== 'test') {
 export default {
   nodeEnv: value.NODE_ENV as string,
   port: value.API_PORT as number,
+  enableCors: Boolean(value.ENABLE_CORS) as boolean,
+  corsWhitelist: (value.CORS_WHITELIST as string).split(','),
 
   mongo: {
     uri: value.MONGO_URI as string,

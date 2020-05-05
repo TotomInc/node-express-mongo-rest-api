@@ -20,6 +20,11 @@ import env from './env';
 const app = express();
 
 /**
+ * List of website to whitelist for CORS. Pull values from `.env` file.
+ */
+const corsWhitelist: string[] = [...env.corsWhitelist];
+
+/**
  * Array of unprotected paths that doesn't require a JWT auth.
  */
 const unprotectedPaths: string[] = ['/api/heartbeat', '/api/auth/'];
@@ -38,6 +43,21 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Secure apps by setting various HTTP headers
 app.use(helmet());
+
+// Enable CORS (Cross Origin Resource Sharing)
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      // Enable CORS only on production and verify if the origin is in the
+      // whitelist.
+      if (env.nodeEnv !== 'production' || (origin && corsWhitelist.includes(origin))) {
+        cb(null, true);
+      } else {
+        cb(new Error('Not allowed due to CORS restrictions'));
+      }
+    },
+  }),
+);
 
 // Enable CORS (Cross Origin Resource Sharing)
 app.use(cors());
