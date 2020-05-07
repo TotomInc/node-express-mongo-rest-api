@@ -68,22 +68,31 @@ We are using `systemd` instead of [`pm2`](https://pm2.keymetrics.io/) or [`forev
    - `sudo adduser node`
    - `su - node`
 
-2. Install [`nvm`](https://github.com/nvm-sh/nvm#installing-and-updating) with latest v12 LTS:
+2. Install `build-essential` package to have the necessary tools to compile some node_modules from source:
+
+   - `sudo apt install build-essential -y`
+
+3. Install [`nginx`](https://www.nginx.com/), we will use it as a reverse proxy:
+
+   - `sudo apt install nginx -y`
+
+4. Install [`nvm`](https://github.com/nvm-sh/nvm#installing-and-updating) with latest v12 LTS:
 
    - `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash`
+   - `nvm install --lts`
 
-3. Install [`yarn`](https://classic.yarnpkg.com/en/docs/install/#debian-stable):
+5. Install [`yarn`](https://classic.yarnpkg.com/en/docs/install/#debian-stable):
 
    - `curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -`
    - `echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list`
    - `sudo apt update && sudo apt install yarn`
 
-4. Clone the repository, run `yarn` and `yarn build`.
+6. Clone the repository, run `yarn && yarn build`.
 
-5. Make sure to fill environment variables:
+7. Make sure to fill environment variables:
    - `cp .env.example .env`
 
-#### Setup process
+#### Setup Node process
 
 > **Note**: if you don't edit the `scripts/update.sh` manually, it will use the name property from the `package.json` as the service name (without hyphens) when running `systemctl` commands (referred to `<myservice>` in this section).
 
@@ -120,7 +129,61 @@ We are using `systemd` instead of [`pm2`](https://pm2.keymetrics.io/) or [`forev
 6. Verify everything is working well `systemctl status <myservice> --l --no-pager`.
    - You can also use `lsof -i -p <api-port>` to verify the Node process is actually listening on the specified port(s).
 
-#### Restarting the API
+#### UFW (firewall) configuration
+
+1. Allow SSH, Nginx HTTP + HTTPS ports and deny all other incoming connections:
+
+   - `sudo ufw allow ssh` (this is needed as we don't want to be locked out the SSH session)
+   - `sudo ufw allow "Nginx Full"` (allow Nginx HTTP + HTTPS)
+   - `ufw default deny incoming` (deny all other incoming connections)
+
+2. Reload UFW `sudo ufw reload`
+
+3. View rules before enabling UFW `sudo ufw status numbered`
+
+   - If you want to remove a rule, you can `sudo ufw delete <rule-number>`.
+
+4. Enable UFW `sudo ufw enable`
+
+#### Nginx configuration
+
+This Nginx configuration will redirect all HTTP request to HTTPS. Also make sure to replace the port used in the `location /` block with the one you setup in the project `.env` file (it's 8443 by default).
+
+1. Create a configuration file for the domain `sudo nano /etc/nginx/sites-available/<my-api-domain>`
+
+2. Add the following content to the Nginx configuration:
+
+   ```
+   server {
+     listen 80;
+
+     server_name <my-api-domain> www.<my-api-domain>;
+
+     return 301 https://$host$request_uri;
+   }
+
+   server {
+     listen 443 ssl http2;
+
+     server_name <my-api-domain> www.<my-api-domain>;
+
+     ssl_certificate /etc/letsencrypt/live/<my-api-domain>/cert.pem;
+     ssl_certificate_key /etc/letsencrypt/live/<my-api-domain>/privkey.pem;
+     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+     ssl_ciphers HIGH:!aNULL:!MD5;
+
+     location / {
+       proxy_pass https://localhost:<api-https-port>;
+       proxy_http_version 1.1;
+       proxy_set_header Upgrade $http_upgrade;
+       proxy_set_header Connection 'upgrade';
+       proxy_set_header Host $host;
+       proxy_cache_bypass $http_upgrade;
+     }
+   }
+   ```
+
+#### Maintenance
 
 - Run `scripts/update.sh` to automatically pull changes, install dependencies, build from source and restart `systemctl` process.
 
