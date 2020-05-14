@@ -566,10 +566,10 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@totominc/eslint-config-typescript@0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@totominc/eslint-config-typescript/-/eslint-config-typescript-0.1.5.tgz#d42ccb422c9711e176522beaa5685dbbd448df28"
-  integrity sha512-QjRE8VpxlCcz5hbbNkqyvnjUQ8uWjASlMrWCcyORFoAQYH0xCYbVmu/AHsckcqkBDY2FiV/eOTwUhweqLmnzig==
+"@totominc/eslint-config-typescript@0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@totominc/eslint-config-typescript/-/eslint-config-typescript-0.1.7.tgz#9e398a5faed3feac95d00ce1f9cc7a52d95a62e9"
+  integrity sha512-Wrl6AYrYCrb1l+c3FTQ2z9UOOulhwMlQbbypZh2eDf7smJKZpAb3QrBTAFzxyvE5OX6LpZ5Om9921qDyuMncbA==
   dependencies:
     "@typescript-eslint/parser" "^2.19.0"
 
