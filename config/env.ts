@@ -60,7 +60,7 @@ export default {
   port: value.API_PORT as number,
   httpsPort: value.API_HTTPS_PORT as number,
   enableCors: Boolean(value.ENABLE_CORS) as boolean,
-  corsWhitelist: (value.CORS_WHITELIST as string).split(','),
+  corsWhitelist: (value.CORS_WHITELIST || '').split(','),
 
   https: {
     privateKey: value.PRIVATE_KEY_PATH as string,
