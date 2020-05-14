@@ -13,7 +13,7 @@ describe('Auth endpoints tests', () => {
     const initialized = express.init();
 
     app = initialized.app;
-    server = initialized.server;
+    server = initialized.httpServer;
   });
 
   afterEach(() => {
