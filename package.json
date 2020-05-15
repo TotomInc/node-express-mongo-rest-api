@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
-    "@sentry/cli": "^1.52.0",
+    "@sentry/cli": "^1.52.3",
     "@sentry/integrations": "^5.15.5",
     "@sentry/node": "^5.15.0",
     "await-to-js": "^2.1.1",
