@@ -77,7 +77,7 @@ app.use(
 app.use(cors());
 
 // Enable JWT protection but add exceptions on some paths
-app.use(expressJwt({ secret: env.secrets.jwt }).unless({ path: unprotectedPaths }));
+app.use(expressJwt({ secret: env.secrets.jwt, algorithms: ['HS256'] }).unless({ path: unprotectedPaths }));
 
 // Enable Express rate-limit middleware
 app.use(limiter);
