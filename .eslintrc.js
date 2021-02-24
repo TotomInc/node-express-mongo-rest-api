@@ -1,5 +1,19 @@
 module.exports = {
-  extends: ['@totominc/typescript'],
+  root: true,
+
+  parser: '@typescript-eslint/parser',
+
+  plugins: ['@typescript-eslint', 'prettier'],
+
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
+    'airbnb-typescript/base',
+    'prettier',
+  ],
 
   env: {
     jest: true,
@@ -7,35 +21,10 @@ module.exports = {
 
   parserOptions: {
     project: './tsconfig.json',
-    tsconfigRootDir: '.',
-  },
-
-  settings: {
-    'import/resolver': {
-      typescript: {
-        directory: './tsconfig.json',
-      },
-    },
   },
 
   rules: {
-    'prettier/prettier': [
-      'error',
-      {
-        printWidth: 120,
-        tabWidth: 2,
-        useTabs: false,
-        semi: true,
-        singleQuote: true,
-        quoteProps: 'as-needed',
-        jsxSingleQuote: false,
-        trailingComma: 'all',
-        bracketSpacing: true,
-        jsxBracketSameLine: false,
-        arrowParens: 'always',
-        vueIndentScriptAndStyle: false,
-      },
-    ],
+    'prettier/prettier': ['error'],
   },
 
   overrides: [
